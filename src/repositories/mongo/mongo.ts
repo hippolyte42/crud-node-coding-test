@@ -7,7 +7,7 @@ export const mongo = async () => {
 
   return {
     close: async () => {
-      await mongoDBClient.close();
+      await mongoClient.close();
     },
     client: mongoDBClient,
   };
