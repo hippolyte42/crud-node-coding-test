@@ -1,17 +1,21 @@
+import { mongo } from "./repositories/mongo/mongo";
 import { http } from "./transport/HTTP/http.transport";
+import { initRepositories } from "./repositories/initRepositories";
 
-let danglingConnections: {
+type DanglingConnections = {
   close: () => void;
-}[] = [];
+};
+let danglingConnections: DanglingConnections[] = [];
 
 const run = async () => {
-  const [HTTP] = await Promise.all([
-    http().catch((e) => {
-      console.error(e);
-    }),
-  ]);
-  if (HTTP) {
+  try {
+    const [HTTP, MONGO] = await Promise.all([http(), mongo()]);
     danglingConnections.unshift(HTTP);
+    danglingConnections.unshift(MONGO);
+
+    initRepositories(MONGO.client);
+  } catch (e) {
+    console.error(e);
   }
 
   console.info("Server started");
