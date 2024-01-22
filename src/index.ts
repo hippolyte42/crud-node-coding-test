@@ -1,5 +1,5 @@
 import { mongo } from "./repositories/mongo/mongo";
-import { http } from "./transport/HTTP/http.transport";
+import { http } from "./transport/http/http.transport";
 import { initRepositories } from "./repositories/initRepositories";
 
 type DanglingConnections = {
