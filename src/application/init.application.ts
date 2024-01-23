@@ -4,6 +4,7 @@ import { AddTeamMemberUsecase } from "./team/addTeamMember.usecase";
 import { CreateTeamUsecase } from "./team/createTeam.usecase";
 import { DeleteTeamUsecase } from "./team/deleteTeam.usecase";
 import { GetTeamUsecase } from "./team/getTeam.usecase";
+import { RemoveTeamMemberUsecase } from "./team/removeTeamMember.usecase";
 import { UpdateTeamUsecase } from "./team/updateTeam.usecase";
 
 export type Usecases = {
@@ -12,6 +13,7 @@ export type Usecases = {
   updateTeamUsecase: UpdateTeamUsecase;
   deleteTeamUsecase: DeleteTeamUsecase;
   addTeamMemberUsecase: AddTeamMemberUsecase;
+  removeTeamMemberUsecase: RemoveTeamMemberUsecase;
 };
 
 export const initApplication = ({
@@ -29,6 +31,10 @@ export const initApplication = ({
     teamRepository,
     memberRepository,
   );
+  const removeTeamMemberUsecase = new RemoveTeamMemberUsecase(
+    teamRepository,
+    memberRepository,
+  );
 
   return {
     createTeamUsecase,
@@ -36,5 +42,6 @@ export const initApplication = ({
     updateTeamUsecase,
     deleteTeamUsecase,
     addTeamMemberUsecase,
+    removeTeamMemberUsecase,
   };
 };

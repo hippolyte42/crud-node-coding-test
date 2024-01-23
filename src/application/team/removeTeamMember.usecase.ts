@@ -1,7 +1,7 @@
 import { MemberRepositoryPort } from "../../repositories/ports/member.repository.port";
 import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
-export class AddTeamMemberUsecase {
+export class RemoveTeamMemberUsecase {
   constructor(
     private readonly teamRepository: TeamRepositoryPort,
     private readonly memberRepository: MemberRepositoryPort,
@@ -23,15 +23,19 @@ export class AddTeamMemberUsecase {
         res: `Team not found for id: ${teamId}`,
       };
     }
-    if (team.memberIds.includes(memberId)) {
+
+    const memberIds = team.memberIds;
+    const indexToRemove = memberIds.indexOf(memberId);
+    if (indexToRemove === -1) {
       return {
         code: 200,
-        res: `Member already in team.`,
+        res: `Member already not in team.`,
       };
     }
 
+    memberIds.splice(indexToRemove, 1);
     const res = await this.teamRepository.updateTeam(teamId, {
-      memberIds: [...team.memberIds, memberId],
+      memberIds,
     });
     return {
       code: 200,

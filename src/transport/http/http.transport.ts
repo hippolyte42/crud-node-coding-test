@@ -9,7 +9,6 @@ const port = 3000;
 export const http = async (usecases: Usecases) => {
   app.use(express.json());
 
-  // TEAM CRUD
   app.post(
     "/team",
     validateRequest({
@@ -87,6 +86,23 @@ export const http = async (usecases: Usecases) => {
     }),
     async (req, res) => {
       const result = await usecases.addTeamMemberUsecase.execute(
+        req.body.teamId,
+        req.body.memberId,
+      );
+      res.status(result.code);
+      res.json(result.res);
+    },
+  );
+  app.patch(
+    "/remove-team-member",
+    validateRequest({
+      body: z.object({
+        teamId: z.string(),
+        memberId: z.string(),
+      }),
+    }),
+    async (req, res) => {
+      const result = await usecases.removeTeamMemberUsecase.execute(
         req.body.teamId,
         req.body.memberId,
       );
