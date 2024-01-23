@@ -60,6 +60,21 @@ export const http = async (usecases: Usecases) => {
       res.json(result.res);
     },
   );
+  app.delete(
+    "/team/:teamId",
+    validateRequest({
+      params: z.object({
+        teamId: z.string(),
+      }),
+    }),
+    async (req, res) => {
+      const result = await usecases.deleteTeamUsecase.execute(
+        req.params.teamId,
+      );
+      res.status(result.code);
+      res.json(result.res);
+    },
+  );
 
   const server = app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

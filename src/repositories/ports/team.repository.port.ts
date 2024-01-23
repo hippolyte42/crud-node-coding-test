@@ -11,4 +11,6 @@ export abstract class TeamRepositoryPort {
     teamId: string,
     updateTeamInput: Partial<Omit<TeamEntity, "_id">>,
   ): Promise<TeamEntity>;
+
+  abstract deleteTeam(teamId: string): Promise<boolean>;
 }

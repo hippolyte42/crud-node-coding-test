@@ -4,7 +4,7 @@ import { initRepositories } from "./repositories/init.repositories";
 import { initApplication } from "./application/init.application";
 
 type DanglingConnections = {
-  close: () => void;
+  close: () => Promise<void> | void;
 };
 let danglingConnections: DanglingConnections[] = [];
 
@@ -52,7 +52,7 @@ run().catch((e) => {
 
     for (const connection of danglingConnections) {
       try {
-        connection.close();
+        await connection.close();
       } catch (e) {
         console.log(`[graceful shutdown] Cannot close service`, e);
       }

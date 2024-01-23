@@ -41,4 +41,10 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     }
     return res;
   }
+
+  async deleteTeam(teamId: string): Promise<boolean> {
+    const _id = new BSON.ObjectId(teamId);
+    const { acknowledged } = await this.teamCollection.deleteOne({ _id });
+    return acknowledged;
+  }
 }
