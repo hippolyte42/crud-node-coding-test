@@ -77,6 +77,24 @@ export const http = async (usecases: Usecases) => {
     },
   );
 
+  app.patch(
+    "/add-team-member",
+    validateRequest({
+      body: z.object({
+        teamId: z.string(),
+        memberId: z.string(),
+      }),
+    }),
+    async (req, res) => {
+      const result = await usecases.addTeamMemberUsecase.execute(
+        req.body.teamId,
+        req.body.memberId,
+      );
+      res.status(result.code);
+      res.json(result.res);
+    },
+  );
+
   const server = app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
   });
