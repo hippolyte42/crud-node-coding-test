@@ -1,5 +1,5 @@
-import { TeamEntity } from "../repositories/entities/team.entity";
-import { TeamRepositoryPort } from "../repositories/ports/team.repository.port";
+import { TeamEntity } from "../../repositories/entities/team.entity";
+import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
 export class CreateTeamUsecase {
   constructor(private readonly teamRepository: TeamRepositoryPort) {}

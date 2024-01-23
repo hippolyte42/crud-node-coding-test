@@ -1,4 +1,4 @@
-import { TeamRepositoryPort } from "../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
 export class GetTeamUsecase {
   constructor(private readonly teamRepository: TeamRepositoryPort) {}
