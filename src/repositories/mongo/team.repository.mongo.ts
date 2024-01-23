@@ -45,4 +45,12 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     const { acknowledged } = await this.teamCollection.deleteOne({ _id });
     return acknowledged;
   }
+
+  async getTeamChildren(parentTeamId: string): Promise<TeamEntity[]> {
+    return this.teamCollection
+      .find({
+        path: { $regex: "/," + parentTeamId + ",/" },
+      })
+      .toArray();
+  }
 }

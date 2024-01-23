@@ -13,4 +13,6 @@ export abstract class TeamRepositoryPort {
   ): Promise<TeamEntity>;
 
   abstract deleteTeam(teamId: string): Promise<boolean>;
+
+  abstract getTeamChildren(parentTeamId: string): Promise<TeamEntity[]>;
 }

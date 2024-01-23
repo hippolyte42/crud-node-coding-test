@@ -1,3 +1,4 @@
+import { BSON } from "mongodb";
 import { MemberRepositoryPort } from "../../repositories/ports/member.repository.port";
 import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
@@ -25,7 +26,7 @@ export class RemoveTeamMemberUsecase {
     }
 
     const memberIds = team.memberIds;
-    const indexToRemove = memberIds.indexOf(memberId);
+    const indexToRemove = memberIds.indexOf(new BSON.ObjectId(memberId));
     if (indexToRemove === -1) {
       return {
         code: 200,

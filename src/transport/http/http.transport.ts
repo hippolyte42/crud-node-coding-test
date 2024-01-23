@@ -14,7 +14,7 @@ export const http = async (usecases: Usecases) => {
     validateRequest({
       body: z.object({
         path: z.string(),
-        memberIds: z.array(z.string()),
+        memberIds: z.array(z.any()),
         name: z.string(),
       }),
     }),
@@ -47,7 +47,7 @@ export const http = async (usecases: Usecases) => {
       }),
       body: z.object({
         path: z.string().optional(),
-        memberIds: z.array(z.string()).optional(),
+        memberIds: z.array(z.any()).optional(),
       }),
     }),
     async (req, res) => {
@@ -105,6 +105,23 @@ export const http = async (usecases: Usecases) => {
       const result = await usecases.removeTeamMemberUsecase.execute(
         req.body.teamId,
         req.body.memberId,
+      );
+      res.status(result.code);
+      res.json(result.res);
+    },
+  );
+  app.patch(
+    "/add-child-team-to-team",
+    validateRequest({
+      body: z.object({
+        childTeamId: z.string(),
+        parentTeamId: z.string(),
+      }),
+    }),
+    async (req, res) => {
+      const result = await usecases.addChildTeamToTeamUsecase.execute(
+        req.body.childTeamId,
+        req.body.parentTeamId,
       );
       res.status(result.code);
       res.json(result.res);
