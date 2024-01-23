@@ -1,6 +1,6 @@
 import { mongo } from "./repositories/mongo/mongo";
 import { http } from "./transport/http/http.transport";
-import { initRepositories } from "./repositories/initRepositories";
+import { initRepositories } from "./repositories/init.repositories";
 import { initApplication } from "./application/init.application";
 
 type DanglingConnections = {
@@ -9,7 +9,7 @@ type DanglingConnections = {
 let danglingConnections: DanglingConnections[] = [];
 
 const run = async () => {
-  // databse
+  // database
   const MONGO = await mongo();
   danglingConnections.unshift(MONGO);
 
