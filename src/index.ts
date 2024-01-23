@@ -13,7 +13,10 @@ const run = async () => {
   const MONGO = await mongo();
   danglingConnections.unshift(MONGO);
 
+  // repositories
   const repositories = initRepositories(MONGO.client);
+
+  // application
   const usecases = initApplication(repositories);
 
   // transport

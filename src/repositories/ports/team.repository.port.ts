@@ -6,4 +6,9 @@ export abstract class TeamRepositoryPort {
   ): Promise<TeamEntity>;
 
   abstract getTeam(teamId: string): Promise<TeamEntity | null>;
+
+  abstract updateTeam(
+    teamId: string,
+    updateTeamInput: Partial<Omit<TeamEntity, "_id">>,
+  ): Promise<TeamEntity>;
 }

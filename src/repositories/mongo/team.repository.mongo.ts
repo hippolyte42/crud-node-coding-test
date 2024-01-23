@@ -28,4 +28,17 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     });
     return res;
   }
+
+  async updateTeam(
+    teamId: string,
+    updateTeamInput: Partial<Omit<TeamEntity, "_id">>,
+  ): Promise<TeamEntity> {
+    const _id = new BSON.ObjectId(teamId);
+    await this.teamCollection.updateOne({ _id }, { $set: updateTeamInput });
+    const res = await this.teamCollection.findOne({ _id });
+    if (!res) {
+      throw new Error("updateTeam error");
+    }
+    return res;
+  }
 }
