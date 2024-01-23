@@ -16,6 +16,7 @@ export const http = async (usecases: Usecases) => {
       body: z.object({
         path: z.string(),
         memberIds: z.array(z.string()),
+        name: z.string(),
       }),
     }),
     async function (req, res) {

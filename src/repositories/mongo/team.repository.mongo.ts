@@ -5,14 +5,12 @@ import { TeamRepositoryPort } from "repositories/ports/team.repository.port";
 export class TeamRepositoryMongo implements TeamRepositoryPort {
   constructor(private readonly teamCollection: Collection<TeamEntity>) {}
 
-  async createTeam({
-    path,
-    memberIds,
-  }: Pick<TeamEntity, "path" | "memberIds">) {
+  async createTeam({ path, memberIds, name }: Omit<TeamEntity, "_id">) {
     const { insertedId } = await this.teamCollection.insertOne({
       _id: new ObjectId(),
       path,
       memberIds,
+      name,
     });
 
     const res = await this.teamCollection.findOne({ _id: insertedId });
