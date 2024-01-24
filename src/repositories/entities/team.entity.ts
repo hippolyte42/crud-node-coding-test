@@ -1,8 +1,6 @@
-import { ObjectId } from "mongodb";
-
 export type TeamEntity = {
-  _id: ObjectId;
+  id: string;
   name: string;
   path: string;
-  memberIds: ObjectId[];
+  memberIds: string[];
 };

@@ -1,4 +1,3 @@
-import { BSON } from "mongodb";
 import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
 export class AddChildTeamToTeamUsecase {
@@ -30,7 +29,7 @@ export class AddChildTeamToTeamUsecase {
     teamChildren.map(async (team) => {
       const newPath = `,${parentTeamId}${team.path}`;
       promises.push(
-        this.teamRepository.updateTeam(team._id.toString(), {
+        this.teamRepository.updateTeam(team.id, {
           path: newPath,
         }),
       );

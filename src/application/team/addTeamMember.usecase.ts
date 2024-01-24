@@ -1,4 +1,3 @@
-import { BSON } from "mongodb";
 import { MemberRepositoryPort } from "../../repositories/ports/member.repository.port";
 import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
@@ -9,7 +8,6 @@ export class AddTeamMemberUsecase {
   ) {}
 
   async execute(teamId: string, memberId: string) {
-    const memberObjectId = new BSON.ObjectId(memberId);
     const teamMember = await this.memberRepository.getMember(memberId);
     if (!teamMember) {
       return {
@@ -25,7 +23,7 @@ export class AddTeamMemberUsecase {
         res: `Team not found for id: ${teamId}`,
       };
     }
-    if (team.memberIds.find((memberId) => memberId.equals(memberObjectId))) {
+    if (team.memberIds.includes(memberId)) {
       return {
         code: 200,
         res: `Member already in team.`,
@@ -33,7 +31,7 @@ export class AddTeamMemberUsecase {
     }
 
     const res = await this.teamRepository.updateTeam(teamId, {
-      memberIds: [...team.memberIds, memberObjectId],
+      memberIds: [...team.memberIds, memberId],
     });
     return {
       code: 200,

@@ -1,6 +1,4 @@
-import { ObjectId } from "mongodb";
-
 export type MemberEntity = {
-  _id: ObjectId;
+  id: string;
   name: string;
 };
