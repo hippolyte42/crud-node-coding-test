@@ -35,7 +35,7 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
   async updateTeam(
     teamId: string,
     updateTeamInput: Partial<Omit<TeamEntity, "id">>,
-  ): Promise<TeamEntity> {
+  ) {
     const _id = new BSON.ObjectId(teamId);
 
     const toUpdate: Partial<Omit<TeamModel, "_id">> = {};
@@ -64,13 +64,13 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     return this.teamMapper.toEntity(res);
   }
 
-  async deleteTeam(teamId: string): Promise<boolean> {
+  async deleteTeam(teamId: string) {
     const _id = new BSON.ObjectId(teamId);
     const { acknowledged } = await this.teamCollection.deleteOne({ _id });
     return acknowledged;
   }
 
-  async getTeamChildren(parentTeamId: string): Promise<TeamEntity[]> {
+  async getTeamChildren(parentTeamId: string) {
     return (
       await this.teamCollection
         .find({
