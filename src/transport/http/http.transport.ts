@@ -14,7 +14,7 @@ export const http = async (usecases: Usecases) => {
     validateRequest({
       body: z.object({
         path: z.string(),
-        memberIds: z.array(z.any()),
+        memberIds: z.array(z.string()),
         name: z.string(),
       }),
     }),
@@ -47,7 +47,7 @@ export const http = async (usecases: Usecases) => {
       }),
       body: z.object({
         path: z.string().optional(),
-        memberIds: z.array(z.any()).optional(),
+        memberIds: z.array(z.string()).optional(),
       }),
     }),
     async (req, res) => {
