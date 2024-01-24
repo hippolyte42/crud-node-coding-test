@@ -1,7 +1,6 @@
-import { mongo } from "./repositories/mongo/mongo";
-import { http } from "./transport/http/http.transport";
 import { initRepositories } from "./repositories/init.repositories";
 import { initApplication } from "./application/init.application";
+import { initTransport } from "./transport/init.transport";
 
 type DanglingConnections = {
   close: () => Promise<void> | void;
@@ -9,19 +8,16 @@ type DanglingConnections = {
 let danglingConnections: DanglingConnections[] = [];
 
 const run = async () => {
-  // database
-  const MONGO = await mongo();
-  danglingConnections.unshift(MONGO);
-
   // repositories
-  const repositories = initRepositories(MONGO.client);
+  const { close: repositoriesClose, repositories } = await initRepositories();
+  danglingConnections.push({ close: repositoriesClose });
 
   // application
   const usecases = initApplication(repositories);
 
   // transport
-  const HTTP = await http(usecases);
-  danglingConnections.unshift(HTTP);
+  const { close: transportClose } = await initTransport(usecases);
+  danglingConnections.push({ close: transportClose });
 
   console.info("Server started");
 };
