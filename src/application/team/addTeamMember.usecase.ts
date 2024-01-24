@@ -25,7 +25,7 @@ export class AddTeamMemberUsecase {
         res: `Team not found for id: ${teamId}`,
       };
     }
-    if (team.memberIds.includes(memberObjectId)) {
+    if (team.memberIds.find((memberId) => memberId.equals(memberObjectId))) {
       return {
         code: 200,
         res: `Member already in team.`,
