@@ -22,4 +22,6 @@ export abstract class TeamRepositoryPort {
       updateTeamInput: Partial<Omit<TeamEntity, "id">>;
     }[],
   ): Promise<boolean>;
+
+  abstract getFirstAncestorTeams(): Promise<TeamEntity[]>;
 }

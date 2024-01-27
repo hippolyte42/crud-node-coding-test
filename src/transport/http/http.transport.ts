@@ -11,7 +11,7 @@ export const http = async (usecases: Usecases) => {
   app.use(express.json());
 
   app.post(
-    "/team",
+    "/teams",
     validateRequest({
       body: TeamEntitySchema.omit({ id: true }),
     }),
@@ -22,8 +22,14 @@ export const http = async (usecases: Usecases) => {
       res.json(result.res);
     },
   );
+  app.get("/teams/first-ancestors", async (req, res) => {
+    const result = await usecases.getFirstAncestorTeamsUsecase.execute();
+
+    res.status(result.code);
+    res.json(result.res);
+  });
   app.get(
-    "/team/:teamId",
+    "/teams/:teamId",
     validateRequest({
       params: z.object({
         teamId: z.string(),
@@ -37,7 +43,7 @@ export const http = async (usecases: Usecases) => {
     },
   );
   app.patch(
-    "/team/:teamId",
+    "/teams/:teamId",
     validateRequest({
       params: z.object({
         teamId: z.string(),
@@ -55,7 +61,7 @@ export const http = async (usecases: Usecases) => {
     },
   );
   app.delete(
-    "/team/:teamId",
+    "/teams/:teamId",
     validateRequest({
       params: z.object({
         teamId: z.string(),
@@ -71,7 +77,7 @@ export const http = async (usecases: Usecases) => {
   );
 
   app.patch(
-    "/add-team-member",
+    "/teams/add-team-member",
     validateRequest({
       body: z.object({
         teamId: z.string(),
@@ -88,7 +94,7 @@ export const http = async (usecases: Usecases) => {
     },
   );
   app.patch(
-    "/remove-team-member",
+    "/teams/remove-team-member",
     validateRequest({
       body: z.object({
         teamId: z.string(),
