@@ -40,7 +40,11 @@ export const initRepositories = async (): Promise<{
   const memberMapper = new MemberMapper();
 
   // repositories
-  const teamRepository = new TeamRepositoryMongo(teamCollection, teamMapper);
+  const teamRepository = new TeamRepositoryMongo(
+    mongoClientConnected,
+    teamCollection,
+    teamMapper,
+  );
   const memberRepository = new MemberRepositoryMongo(
     memberCollection,
     memberMapper,

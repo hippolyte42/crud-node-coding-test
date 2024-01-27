@@ -1,7 +1,7 @@
 import { MemberRepositoryPort } from "../repositories/ports/member.repository.port";
 import { TeamRepositoryPort } from "../repositories/ports/team.repository.port";
-import { AddChildTeamToTeamUsecase } from "./team/addChildTeamToTeam.usecase";
 import { AddTeamMemberUsecase } from "./team/addTeamMember.usecase";
+import { ChangeTeamParentUsecase } from "./team/changeTeamParent.usecase";
 import { CreateTeamUsecase } from "./team/createTeam.usecase";
 import { DeleteTeamUsecase } from "./team/deleteTeam.usecase";
 import { GetTeamUsecase } from "./team/getTeam.usecase";
@@ -15,7 +15,7 @@ export type Usecases = {
   deleteTeamUsecase: DeleteTeamUsecase;
   addTeamMemberUsecase: AddTeamMemberUsecase;
   removeTeamMemberUsecase: RemoveTeamMemberUsecase;
-  addChildTeamToTeamUsecase: AddChildTeamToTeamUsecase;
+  changeTeamParentUsecase: ChangeTeamParentUsecase;
 };
 
 export const initApplication = ({
@@ -37,9 +37,7 @@ export const initApplication = ({
     teamRepository,
     memberRepository,
   );
-  const addChildTeamToTeamUsecase = new AddChildTeamToTeamUsecase(
-    teamRepository,
-  );
+  const changeTeamParentUsecase = new ChangeTeamParentUsecase(teamRepository);
 
   return {
     createTeamUsecase,
@@ -48,6 +46,6 @@ export const initApplication = ({
     deleteTeamUsecase,
     addTeamMemberUsecase,
     removeTeamMemberUsecase,
-    addChildTeamToTeamUsecase,
+    changeTeamParentUsecase,
   };
 };

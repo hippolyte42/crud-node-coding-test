@@ -15,4 +15,11 @@ export abstract class TeamRepositoryPort {
   abstract deleteTeam(teamId: string): Promise<boolean>;
 
   abstract getTeamChildren(parentTeamId: string): Promise<TeamEntity[]>;
+
+  abstract updateManyTeamsInTrx(
+    updateManyTeamsInput: {
+      teamId: string;
+      updateTeamInput: Partial<Omit<TeamEntity, "id">>;
+    }[],
+  ): Promise<boolean>;
 }

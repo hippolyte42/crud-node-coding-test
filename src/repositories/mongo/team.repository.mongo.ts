@@ -1,4 +1,4 @@
-import { BSON, Collection, ObjectId } from "mongodb";
+import { BSON, Collection, MongoClient, ObjectId, UpdateResult } from "mongodb";
 import { TeamEntity } from "repositories/entities/team.entity";
 import { TeamRepositoryPort } from "repositories/ports/team.repository.port";
 import { TeamModel } from "./models/team.model.mongo";
@@ -6,6 +6,7 @@ import { TeamMapper } from "./mappers/team.mapper.mongo";
 
 export class TeamRepositoryMongo implements TeamRepositoryPort {
   constructor(
+    private readonly dbclient: MongoClient,
     private readonly teamCollection: Collection<TeamModel>,
     private readonly teamMapper: TeamMapper,
   ) {}
@@ -62,6 +63,50 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
       throw new Error("updateTeam error");
     }
     return this.teamMapper.toEntity(res);
+  }
+
+  async updateManyTeamsInTrx(
+    updateManyTeamsInput: {
+      teamId: string;
+      updateTeamInput: Partial<Omit<TeamEntity, "id">>;
+    }[],
+  ) {
+    const txnResult: any = await this.dbclient.withSession(async (session) =>
+      session.withTransaction(async (session) => {
+        for (const item of updateManyTeamsInput) {
+          const _id = new BSON.ObjectId(item.teamId);
+          const toUpdate: Partial<Omit<TeamModel, "_id">> = {};
+          if (item.updateTeamInput.memberIds) {
+            toUpdate.memberIds = item.updateTeamInput.memberIds?.map(
+              (memberId) => new BSON.ObjectId(memberId),
+            );
+          }
+          if (item.updateTeamInput.name) {
+            toUpdate.name = item.updateTeamInput.name;
+          }
+          if (item.updateTeamInput.path) {
+            toUpdate.path = item.updateTeamInput.path;
+          }
+
+          const updatedTeam = await this.teamCollection.findOneAndUpdate(
+            { _id },
+            {
+              $set: toUpdate,
+            },
+            { session },
+          );
+          if (updatedTeam.ok !== 1) {
+            await session.abortTransaction();
+            return false;
+          }
+        }
+        return true;
+      }),
+    );
+
+    console.log("txnResult ici", txnResult); // todo check txnResult value
+
+    return txnResult;
   }
 
   async deleteTeam(teamId: string) {

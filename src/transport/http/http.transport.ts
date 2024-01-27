@@ -111,16 +111,16 @@ export const http = async (usecases: Usecases) => {
     },
   );
   app.patch(
-    "/add-child-team-to-team",
+    "/teams/change-team-parent",
     validateRequest({
       body: z.object({
-        childTeamId: z.string(),
+        teamId: z.string(),
         parentTeamId: z.string(),
       }),
     }),
     async (req, res) => {
-      const result = await usecases.addChildTeamToTeamUsecase.execute(
-        req.body.childTeamId,
+      const result = await usecases.changeTeamParentUsecase.execute(
+        req.body.teamId,
         req.body.parentTeamId,
       );
       res.status(result.code);
