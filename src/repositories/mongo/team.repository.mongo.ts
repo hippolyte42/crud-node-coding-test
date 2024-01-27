@@ -125,6 +125,16 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     ).map((teamChildren) => this.teamMapper.toEntity(teamChildren));
   }
 
+  async getTeamFirstChildren(parentTeamId: string) {
+    return (
+      await this.teamCollection
+        .find({
+          path: `,${parentTeamId},`,
+        })
+        .toArray()
+    ).map((teamChildren) => this.teamMapper.toEntity(teamChildren));
+  }
+
   async getFirstAncestorTeams() {
     return (await this.teamCollection.find({ path: "" }).toArray()).map(
       (teamChildren) => this.teamMapper.toEntity(teamChildren),

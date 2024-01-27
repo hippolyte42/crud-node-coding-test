@@ -24,4 +24,6 @@ export abstract class TeamRepositoryPort {
   ): Promise<boolean>;
 
   abstract getFirstAncestorTeams(): Promise<TeamEntity[]>;
+
+  abstract getTeamFirstChildren(parentTeamId: string): Promise<TeamEntity[]>;
 }
