@@ -2,6 +2,7 @@ import express from "express";
 import { Usecases } from "../../application/init.application";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
+import { TeamEntitySchema } from "../../entities/team.entity";
 
 const app = express();
 const port = 3000;
@@ -12,11 +13,7 @@ export const http = async (usecases: Usecases) => {
   app.post(
     "/team",
     validateRequest({
-      body: z.object({
-        path: z.string(),
-        memberIds: z.array(z.string()),
-        name: z.string(),
-      }),
+      body: TeamEntitySchema.omit({ id: true }),
     }),
     async function (req, res) {
       const result = await usecases.createTeamUsecase.execute(req.body);
@@ -45,10 +42,7 @@ export const http = async (usecases: Usecases) => {
       params: z.object({
         teamId: z.string(),
       }),
-      body: z.object({
-        path: z.string().optional(),
-        memberIds: z.array(z.string()).optional(),
-      }),
+      body: TeamEntitySchema.omit({ id: true }),
     }),
     async (req, res) => {
       const result = await usecases.updateTeamUsecase.execute(

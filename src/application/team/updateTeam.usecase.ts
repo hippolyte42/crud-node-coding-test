@@ -1,4 +1,4 @@
-import { TeamEntity } from "../../repositories/entities/team.entity";
+import { TeamEntity } from "../../entities/team.entity";
 import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
 
 export class UpdateTeamUsecase {

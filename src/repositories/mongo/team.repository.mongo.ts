@@ -1,8 +1,8 @@
-import { BSON, Collection, MongoClient, ObjectId, UpdateResult } from "mongodb";
-import { TeamEntity } from "repositories/entities/team.entity";
+import { BSON, Collection, MongoClient, ObjectId } from "mongodb";
 import { TeamRepositoryPort } from "repositories/ports/team.repository.port";
 import { TeamModel } from "./models/team.model.mongo";
 import { TeamMapper } from "./mappers/team.mapper.mongo";
+import { TeamEntity } from "../../entities/team.entity";
 
 export class TeamRepositoryMongo implements TeamRepositoryPort {
   constructor(

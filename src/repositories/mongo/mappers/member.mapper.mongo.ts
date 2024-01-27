@@ -1,4 +1,4 @@
-import { MemberEntity } from "../../entities/member.entity";
+import { MemberEntity } from "../../../entities/member.entity";
 import { MemberModel } from "../models/member.model.mongo";
 
 export class MemberMapper {

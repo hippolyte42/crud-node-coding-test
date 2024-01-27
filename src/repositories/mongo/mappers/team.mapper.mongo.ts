@@ -1,4 +1,4 @@
-import { TeamEntity } from "../../entities/team.entity";
+import { TeamEntity } from "../../../entities/team.entity";
 import { TeamModel } from "../models/team.model.mongo";
 
 export class TeamMapper {

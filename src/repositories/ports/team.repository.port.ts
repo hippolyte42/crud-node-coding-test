@@ -1,4 +1,4 @@
-import { TeamEntity } from "repositories/entities/team.entity";
+import { TeamEntity } from "../../entities/team.entity";
 
 export abstract class TeamRepositoryPort {
   abstract createTeam(
