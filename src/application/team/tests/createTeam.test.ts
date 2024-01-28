@@ -1,9 +1,9 @@
 import { Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
-import { CreateTeamUsecase } from "./createTeam.usecase";
-import { TeamModel } from "../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../repositories/mongo/team.repository.mongo";
-import { MONGODB_COLLECTION_TEAMS } from "../../constants";
+import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { CreateTeamUsecase } from "../createTeam.usecase";
+import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
 
 describe("CreateTeamUsecase", () => {
   let connection: MongoClient;

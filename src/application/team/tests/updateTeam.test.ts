@@ -1,10 +1,10 @@
 import { BSON, Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
-import { UpdateTeamUsecase } from "./updateTeam.usecase";
-import { TeamModel } from "../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../repositories/mongo/team.repository.mongo";
-import { MONGODB_COLLECTION_TEAMS } from "../../constants";
-import { TeamEntity } from "../../entities/team.entity";
+import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { UpdateTeamUsecase } from "../updateTeam.usecase";
+import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
+import { TeamEntity } from "../../../entities/team.entity";
 
 describe("UpdateTeamUsecase", () => {
   let connection: MongoClient;
