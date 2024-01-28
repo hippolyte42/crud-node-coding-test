@@ -5,11 +5,14 @@ import { TeamMapper } from "./mappers/team.mapper.mongo";
 import { TeamEntity } from "../../entities/team.entity";
 
 export class TeamRepositoryMongo implements TeamRepositoryPort {
+  private teamMapper: TeamMapper;
+
   constructor(
     private readonly dbclient: MongoClient,
     private readonly teamCollection: Collection<TeamModel>,
-    private readonly teamMapper: TeamMapper,
-  ) {}
+  ) {
+    this.teamMapper = new TeamMapper();
+  }
 
   async createTeam({ path, memberIds, name }: Omit<TeamEntity, "id">) {
     const { insertedId } = await this.teamCollection.insertOne({

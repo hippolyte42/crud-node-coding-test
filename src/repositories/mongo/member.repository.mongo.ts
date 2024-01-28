@@ -5,10 +5,11 @@ import { MemberMapper } from "./mappers/member.mapper.mongo";
 import { MemberEntity } from "../../entities/member.entity";
 
 export class MemberRepositoryMongo implements MemberRepositoryPort {
-  constructor(
-    private readonly memberCollection: Collection<MemberModel>,
-    private readonly memberMapper: MemberMapper,
-  ) {}
+  private memberMapper: MemberMapper;
+
+  constructor(private readonly memberCollection: Collection<MemberModel>) {
+    this.memberMapper = new MemberMapper();
+  }
 
   async getMember(memberId: string): Promise<MemberEntity | null> {
     const res = await this.memberCollection.findOne({
