@@ -5,8 +5,8 @@ import { TeamModel } from "../../repositories/mongo/models/team.model.mongo";
 import { TeamRepositoryMongo } from "../../repositories/mongo/team.repository.mongo";
 import { MONGODB_COLLECTION_TEAMS } from "../../constants";
 
-describe("createTeamUsecase", () => {
-  let connection: any;
+describe("CreateTeamUsecase", () => {
+  let connection: MongoClient;
   let db: Db;
   let teamCollection: Collection<TeamModel>;
   let teamRepo: TeamRepositoryPort;
@@ -19,7 +19,7 @@ describe("createTeamUsecase", () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     } as any);
-    db = await connection.db();
+    db = connection.db();
     teamCollection = db.collection<TeamModel>(MONGODB_COLLECTION_TEAMS);
     teamRepo = new TeamRepositoryMongo(connection, teamCollection);
 

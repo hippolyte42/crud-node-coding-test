@@ -8,16 +8,18 @@ export class GetTeamUsecase {
     const team = await this.teamRepository.getTeam(teamId);
 
     if (team) {
-      const res: {
+      const res: TeamEntity & {
         parent: TeamEntity | null;
         firstChildren: TeamEntity[] | null;
       } = {
+        ...team,
         firstChildren: [],
         parent: null,
       };
+
       if (team.path.length) {
         const path = team.path.split(",");
-        const topmostParentId = path[path.length - 1];
+        const topmostParentId = path[path.length - 2];
         const parent = await this.teamRepository.getTeam(topmostParentId);
         res.parent = parent;
       }

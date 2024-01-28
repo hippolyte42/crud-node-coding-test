@@ -132,7 +132,9 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     return (
       await this.teamCollection
         .find({
-          path: `,${parentTeamId},`,
+          path: {
+            $regex: new RegExp(`[^,]+,${parentTeamId},$`),
+          },
         })
         .toArray()
     ).map((teamChildren) => this.teamMapper.toEntity(teamChildren));
