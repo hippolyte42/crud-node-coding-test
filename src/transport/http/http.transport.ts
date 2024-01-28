@@ -90,7 +90,7 @@ export const http = async (usecases: Usecases) => {
         req.body.memberId,
       );
       res.status(result.code);
-      res.json(result.res);
+      res.json(result.res || result.error);
     },
   );
   app.patch(

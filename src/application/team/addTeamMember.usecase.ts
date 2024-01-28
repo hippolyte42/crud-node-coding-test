@@ -12,7 +12,8 @@ export class AddTeamMemberUsecase {
     if (!teamMember) {
       return {
         code: 404,
-        res: `Member not found for id: ${memberId}`,
+        res: null,
+        error: `Member not found for id: ${memberId}`,
       };
     }
 
@@ -20,13 +21,14 @@ export class AddTeamMemberUsecase {
     if (!team) {
       return {
         code: 404,
-        res: `Team not found for id: ${teamId}`,
+        res: null,
+        error: `Team not found for id: ${teamId}`,
       };
     }
     if (team.memberIds.includes(memberId)) {
       return {
         code: 200,
-        res: `Member already in team.`,
+        res: null,
       };
     }
 
