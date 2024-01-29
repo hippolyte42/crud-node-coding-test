@@ -1,5 +1,8 @@
-import { MemberRepositoryPort } from "../../repositories/ports/member.repository.port";
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
+import { TeamEntity } from "../../entities/team.entity";
+import RessourceConflictError from "../../errors/ressourceConflict.error";
+import RessourceNotFoundError from "../../errors/ressourceNotFound.error";
+import { MemberRepositoryPort } from "../../repository/ports/member.repository.port";
+import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
 
 export class RemoveTeamMemberUsecase {
   constructor(
@@ -7,23 +10,19 @@ export class RemoveTeamMemberUsecase {
     private readonly memberRepository: MemberRepositoryPort,
   ) {}
 
-  async execute(teamId: string, memberId: string) {
+  async execute(teamId: string, memberId: string): Promise<TeamEntity> {
     const teamMember = await this.memberRepository.getMember(memberId);
     if (!teamMember) {
-      return {
-        code: 404,
-        res: null,
-        error: `Member not found for id: ${memberId}`,
-      };
+      throw new RessourceNotFoundError({
+        message: `RemoveTeamMemberUsecase: member ${memberId} not found.`,
+      });
     }
 
     const team = await this.teamRepository.getTeam(teamId);
     if (!team) {
-      return {
-        code: 404,
-        res: null,
-        error: `Team not found for id: ${teamId}`,
-      };
+      throw new RessourceNotFoundError({
+        message: `RemoveTeamMemberUsecase: team ${teamId} not found.`,
+      });
     }
 
     const memberIds = team.memberIds;
@@ -31,19 +30,15 @@ export class RemoveTeamMemberUsecase {
       .map((memberId) => memberId.toString())
       .indexOf(memberId);
     if (indexToRemove === -1) {
-      return {
-        code: 200,
-        res: null,
-      };
+      throw new RessourceConflictError({
+        message: `RemoveTeamMemberUsecase: member ${memberId} not in team ${teamId}.`,
+      });
     }
 
     memberIds.splice(indexToRemove, 1);
-    const res = await this.teamRepository.updateTeam(teamId, {
+
+    return this.teamRepository.updateTeam(teamId, {
       memberIds,
     });
-    return {
-      code: 200,
-      res,
-    };
   }
 }

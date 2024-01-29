@@ -1,8 +1,8 @@
 import { BSON, Collection } from "mongodb";
-import { MemberRepositoryPort } from "repositories/ports/member.repository.port";
 import { MemberModel } from "./models/member.model.mongo";
 import { MemberMapper } from "./mappers/member.mapper.mongo";
 import { MemberEntity } from "../../entities/member.entity";
+import { MemberRepositoryPort } from "../ports/member.repository.port";
 
 export class MemberRepositoryMongo implements MemberRepositoryPort {
   private memberMapper: MemberMapper;

@@ -1,14 +1,20 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { Usecases } from "../../application/init.application";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
 import { TeamEntitySchema } from "../../entities/team.entity";
+import { errorHandler } from "./middlewares/http.errors";
+require("express-async-errors");
 
 const app = express();
 const port = 3000;
 
 export const http = async (usecases: Usecases) => {
+  // middlewares
   app.use(express.json());
+
+  // error handling
+  app.use(errorHandler);
 
   app.post(
     "/teams",
@@ -18,15 +24,15 @@ export const http = async (usecases: Usecases) => {
     async function (req, res) {
       const result = await usecases.createTeamUsecase.execute(req.body);
 
-      res.status(result.code);
-      res.json(result.res);
+      res.status(200);
+      res.json(result);
     },
   );
   app.get("/teams/first-ancestors", async (req, res) => {
     const result = await usecases.getFirstAncestorTeamsUsecase.execute();
 
-    res.status(result.code);
-    res.json(result.res);
+    res.status(200);
+    res.json(result);
   });
   app.get(
     "/teams/:teamId",
@@ -38,28 +44,11 @@ export const http = async (usecases: Usecases) => {
     async (req, res) => {
       const result = await usecases.getTeamUsecase.execute(req.params.teamId);
 
-      res.status(result.code);
-      res.json(result.res);
+      res.status(200);
+      res.json(result);
     },
   );
-  app.patch(
-    "/teams/:teamId",
-    validateRequest({
-      params: z.object({
-        teamId: z.string(),
-      }),
-      body: TeamEntitySchema.omit({ id: true }),
-    }),
-    async (req, res) => {
-      const result = await usecases.updateTeamUsecase.execute(
-        req.params.teamId,
-        req.body,
-      );
 
-      res.status(result.code);
-      res.json(result.res);
-    },
-  );
   app.delete(
     "/teams/:teamId",
     validateRequest({
@@ -71,8 +60,8 @@ export const http = async (usecases: Usecases) => {
       const result = await usecases.deleteTeamUsecase.execute(
         req.params.teamId,
       );
-      res.status(result.code);
-      res.json(result.res);
+      res.status(200);
+      res.json(result);
     },
   );
 
@@ -89,8 +78,8 @@ export const http = async (usecases: Usecases) => {
         req.body.teamId,
         req.body.memberId,
       );
-      res.status(result.code);
-      res.json(result.res || result.error);
+      res.status(200);
+      res.json(result);
     },
   );
   app.patch(
@@ -106,8 +95,8 @@ export const http = async (usecases: Usecases) => {
         req.body.teamId,
         req.body.memberId,
       );
-      res.status(result.code);
-      res.json(result.res);
+      res.status(200);
+      res.json(result);
     },
   );
   app.patch(
@@ -123,8 +112,26 @@ export const http = async (usecases: Usecases) => {
         req.body.teamId,
         req.body.parentTeamId,
       );
-      res.status(result.code);
-      res.json(result.res);
+      res.status(200);
+      res.json(result);
+    },
+  );
+  app.patch(
+    "/teams/:teamId",
+    validateRequest({
+      params: z.object({
+        teamId: z.string(),
+      }),
+      body: TeamEntitySchema.omit({ id: true }),
+    }),
+    async (req, res) => {
+      const result = await usecases.updateTeamUsecase.execute(
+        req.params.teamId,
+        req.body,
+      );
+
+      res.status(200);
+      res.json(result);
     },
   );
 

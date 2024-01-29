@@ -1,24 +1,23 @@
 import { TeamEntity } from "../../entities/team.entity";
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
+import RessourceNotFoundError from "../../errors/ressourceNotFound.error";
+import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
 
 export class ChangeTeamParentUsecase {
   constructor(private readonly teamRepository: TeamRepositoryPort) {}
 
-  async execute(teamId: string, newParentTeamId: string) {
+  async execute(teamId: string, newParentTeamId: string): Promise<boolean> {
     const team = await this.teamRepository.getTeam(teamId);
 
     if (!team) {
-      return {
-        code: 200,
-        res: "Team not found.",
-      };
+      throw new RessourceNotFoundError({
+        message: `ChangeTeamParentUsecase: team ${teamId} not found.`,
+      });
     }
     const parentTeam = await this.teamRepository.getTeam(newParentTeamId);
     if (!parentTeam) {
-      return {
-        code: 200,
-        res: "Parent team not found.",
-      };
+      throw new RessourceNotFoundError({
+        message: `ChangeTeamParentUsecase: parent team ${newParentTeamId} not found.`,
+      });
     }
     const teamOldPath = team.path;
     const teamNewPath = `${parentTeam.path || ","}${newParentTeamId},`;
@@ -48,12 +47,6 @@ export class ChangeTeamParentUsecase {
       });
     });
 
-    const res =
-      await this.teamRepository.updateManyTeamsInTrx(updateManyTeamsInput);
-
-    return {
-      code: 200,
-      res,
-    };
+    return this.teamRepository.updateManyTeamsInTrx(updateManyTeamsInput);
   }
 }

@@ -1,5 +1,8 @@
-import { MemberRepositoryPort } from "../../repositories/ports/member.repository.port";
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
+import { TeamEntity } from "../../entities/team.entity";
+import BadRequestError from "../../errors/badRequest.error";
+import RessourceNotFoundError from "../../errors/ressourceNotFound.error";
+import { MemberRepositoryPort } from "../../repository/ports/member.repository.port";
+import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
 
 export class AddTeamMemberUsecase {
   constructor(
@@ -7,37 +10,29 @@ export class AddTeamMemberUsecase {
     private readonly memberRepository: MemberRepositoryPort,
   ) {}
 
-  async execute(teamId: string, memberId: string) {
+  async execute(teamId: string, memberId: string): Promise<TeamEntity> {
     const teamMember = await this.memberRepository.getMember(memberId);
     if (!teamMember) {
-      return {
-        code: 404,
-        res: null,
-        error: `Member not found for id: ${memberId}`,
-      };
+      throw new RessourceNotFoundError({
+        message: `AddTeamMemberUsecase: member ${memberId} not found.`,
+      });
     }
 
     const team = await this.teamRepository.getTeam(teamId);
     if (!team) {
-      return {
-        code: 404,
-        res: null,
-        error: `Team not found for id: ${teamId}`,
-      };
-    }
-    if (team.memberIds.includes(memberId)) {
-      return {
-        code: 200,
-        res: null,
-      };
+      throw new RessourceNotFoundError({
+        message: `AddTeamMemberUsecase: team ${teamId} not found.`,
+      });
     }
 
-    const res = await this.teamRepository.updateTeam(teamId, {
+    if (team.memberIds.includes(memberId)) {
+      throw new BadRequestError({
+        message: `AddTeamMemberUsecase: member ${memberId} already in team ${teamId}.`,
+      });
+    }
+
+    return this.teamRepository.updateTeam(teamId, {
       memberIds: [...team.memberIds, memberId],
     });
-    return {
-      code: 200,
-      res,
-    };
   }
 }

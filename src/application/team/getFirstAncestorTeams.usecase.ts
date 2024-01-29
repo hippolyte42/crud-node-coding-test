@@ -1,14 +1,10 @@
-import { TeamRepositoryPort } from "../../repositories/ports/team.repository.port";
+import { TeamEntity } from "../../entities/team.entity";
+import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
 
 export class GetFirstAncestorTeamsUsecase {
   constructor(private readonly teamRepository: TeamRepositoryPort) {}
 
-  async execute() {
-    const res = await this.teamRepository.getFirstAncestorTeams();
-
-    return {
-      code: 200,
-      res,
-    };
+  async execute(): Promise<TeamEntity[]> {
+    return this.teamRepository.getFirstAncestorTeams();
   }
 }

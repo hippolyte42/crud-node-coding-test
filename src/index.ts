@@ -1,4 +1,4 @@
-import { initRepositories } from "./repositories/init.repositories";
+import { initRepositories } from "./repository/init.repositories";
 import { initApplication } from "./application/init.application";
 import { initTransport } from "./transport/init.transport";
 

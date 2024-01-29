@@ -1,5 +1,5 @@
-import { MemberRepositoryPort } from "../repositories/ports/member.repository.port";
-import { TeamRepositoryPort } from "../repositories/ports/team.repository.port";
+import { MemberRepositoryPort } from "../repository/ports/member.repository.port";
+import { TeamRepositoryPort } from "../repository/ports/team.repository.port";
 import { AddTeamMemberUsecase } from "./team/addTeamMember.usecase";
 import { ChangeTeamParentUsecase } from "./team/changeTeamParent.usecase";
 import { CreateTeamUsecase } from "./team/createTeam.usecase";

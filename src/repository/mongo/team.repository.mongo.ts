@@ -1,8 +1,8 @@
 import { BSON, Collection, MongoClient, ObjectId } from "mongodb";
-import { TeamRepositoryPort } from "repositories/ports/team.repository.port";
 import { TeamModel } from "./models/team.model.mongo";
 import { TeamMapper } from "./mappers/team.mapper.mongo";
 import { TeamEntity } from "../../entities/team.entity";
+import { TeamRepositoryPort } from "../ports/team.repository.port";
 
 export class TeamRepositoryMongo implements TeamRepositoryPort {
   private teamMapper: TeamMapper;
@@ -15,16 +15,19 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
   }
 
   async createTeam({ path, memberIds, name }: Omit<TeamEntity, "id">) {
-    const { insertedId } = await this.teamCollection.insertOne({
+    const { insertedId, acknowledged } = await this.teamCollection.insertOne({
       _id: new ObjectId(),
       path,
       memberIds: memberIds.map((memberId) => new BSON.ObjectId(memberId)),
       name,
     });
+    if (!acknowledged) {
+      throw new Error();
+    }
 
     const team = await this.teamCollection.findOne({ _id: insertedId });
     if (!team) {
-      throw new Error("createTeam error");
+      throw new Error();
     }
     return this.teamMapper.toEntity(team);
   }
@@ -63,7 +66,7 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     );
     const res = await this.teamCollection.findOne({ _id });
     if (!res) {
-      throw new Error("updateTeam error");
+      throw new Error();
     }
     return this.teamMapper.toEntity(res);
   }
@@ -74,6 +77,7 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
       updateTeamInput: Partial<Omit<TeamEntity, "id">>;
     }[],
   ) {
+    // todo type txnResult
     const txnResult: any = await this.dbclient.withSession(async (session) =>
       session.withTransaction(async (session) => {
         for (const item of updateManyTeamsInput) {
