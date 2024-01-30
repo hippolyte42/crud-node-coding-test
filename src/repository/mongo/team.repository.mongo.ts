@@ -39,24 +39,16 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     return res ? this.teamMapper.toEntity(res) : null;
   }
 
-  async updateTeam(
-    teamId: string,
-    updateTeamInput: Partial<Omit<TeamEntity, "id">>,
-  ) {
+  async updateTeam(teamId: string, updateTeamInput: Omit<TeamEntity, "id">) {
     const _id = new BSON.ObjectId(teamId);
 
-    const toUpdate: Partial<Omit<TeamModel, "_id">> = {};
-    if (updateTeamInput.memberIds) {
-      toUpdate.memberIds = updateTeamInput.memberIds?.map(
+    const toUpdate: Omit<TeamModel, "_id"> = {
+      memberIds: updateTeamInput.memberIds?.map(
         (memberId) => new BSON.ObjectId(memberId),
-      );
-    }
-    if (updateTeamInput.name) {
-      toUpdate.name = updateTeamInput.name;
-    }
-    if (updateTeamInput.path) {
-      toUpdate.path = updateTeamInput.path;
-    }
+      ),
+      name: updateTeamInput.name,
+      path: updateTeamInput.path,
+    };
 
     await this.teamCollection.updateOne(
       { _id },
@@ -71,49 +63,46 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     return this.teamMapper.toEntity(res);
   }
 
-  async updateManyTeamsInTrx(
-    updateManyTeamsInput: {
+  async updateTeamsPath(
+    updateTeamsPathInput: {
       teamId: string;
-      updateTeamInput: Partial<Omit<TeamEntity, "id">>;
+      newPath: string;
     }[],
   ) {
-    // todo type txnResult
-    const txnResult: any = await this.dbclient.withSession(async (session) =>
-      session.withTransaction(async (session) => {
-        for (const item of updateManyTeamsInput) {
-          const _id = new BSON.ObjectId(item.teamId);
-          const toUpdate: Partial<Omit<TeamModel, "_id">> = {};
-          if (item.updateTeamInput.memberIds) {
-            toUpdate.memberIds = item.updateTeamInput.memberIds?.map(
-              (memberId) => new BSON.ObjectId(memberId),
-            );
-          }
-          if (item.updateTeamInput.name) {
-            toUpdate.name = item.updateTeamInput.name;
-          }
-          if (item.updateTeamInput.path) {
-            toUpdate.path = item.updateTeamInput.path;
-          }
+    // todo use mongo driver that supports transactions
+    // const transactionResult: any = await this.dbclient.withSession(
+    //   async (session) =>
+    //     session.withTransaction(async (session) => {
+    //       for (const input of updateTeamsPathInput) {
+    //         const _id = new BSON.ObjectId(input.teamId);
+    //         const updatedTeam = await this.teamCollection.findOneAndUpdate(
+    //           { _id },
+    //           {
+    //             $set: { path: input.newPath },
+    //           },
+    //           { session },
+    //         );
+    //         if (updatedTeam.ok !== 1) {
+    //           await session.abortTransaction();
+    //           throw new Error();
+    //         }
+    //       }
+    //       return true;
+    //     }),
+    // );
+    // return !!transactionResult;
 
-          const updatedTeam = await this.teamCollection.findOneAndUpdate(
-            { _id },
-            {
-              $set: toUpdate,
-            },
-            { session },
-          );
-          if (updatedTeam.ok !== 1) {
-            await session.abortTransaction();
-            return false;
-          }
-        }
-        return true;
-      }),
-    );
-
-    console.log("txnResult ici", txnResult); // todo check txnResult value
-
-    return txnResult;
+    const bulkUpdateInput = updateTeamsPathInput.map(({ teamId, newPath }) => {
+      return {
+        updateOne: {
+          filter: { _id: new BSON.ObjectId(teamId) },
+          update: { $set: { path: newPath } },
+        },
+      };
+    });
+    const bulkUpdateInputResult =
+      await this.teamCollection.bulkWrite(bulkUpdateInput);
+    return !!bulkUpdateInputResult.ok;
   }
 
   async deleteTeam(teamId: string) {
@@ -126,7 +115,7 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
     return (
       await this.teamCollection
         .find({
-          path: { $regex: "/," + parentTeamId + ",/" },
+          path: { $regex: new RegExp(`,${parentTeamId},`) },
         })
         .toArray()
     ).map((teamChildren) => this.teamMapper.toEntity(teamChildren));
