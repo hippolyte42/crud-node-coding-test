@@ -1,8 +1,8 @@
 import { Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../../repository/ports/team.repository.port";
 import { GetTeamUsecase } from "../getTeam.usecase";
-import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { TeamModel } from "../../../repository/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repository/mongo/team.repository.mongo";
 import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
 import { TeamEntity } from "../../../entities/team.entity";
 
@@ -50,8 +50,7 @@ describe("GetTeamUsecase", () => {
   });
 
   test("Get Team", async () => {
-    const { code, res } = await getTeamUsecase.execute(team.id);
-    expect(code).toEqual(200);
+    const res = await getTeamUsecase.execute(team.id);
     expect(res).toBeDefined();
 
     expect(res?.id).toEqual(team.id);

@@ -1,15 +1,15 @@
 import { BSON, Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../../repository/ports/team.repository.port";
 import { RemoveTeamMemberUsecase } from "../removeTeamMember.usecase";
-import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
-import { MemberModel } from "../../../repositories/mongo/models/member.model.mongo";
-import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
-import { MemberRepositoryMongo } from "../../../repositories/mongo/member.repository.mongo";
+import { TeamModel } from "../../../repository/mongo/models/team.model.mongo";
+import { MemberModel } from "../../../repository/mongo/models/member.model.mongo";
+import { TeamRepositoryMongo } from "../../../repository/mongo/team.repository.mongo";
+import { MemberRepositoryMongo } from "../../../repository/mongo/member.repository.mongo";
 import {
   MONGODB_COLLECTION_MEMBERS,
   MONGODB_COLLECTION_TEAMS,
 } from "../../../constants";
-import { MemberRepositoryPort } from "../../../repositories/ports/member.repository.port";
+import { MemberRepositoryPort } from "../../../repository/ports/member.repository.port";
 
 describe("RemoveTeamMemberUsecase", () => {
   let connection: MongoClient;
@@ -54,11 +54,7 @@ describe("RemoveTeamMemberUsecase", () => {
     const teamBefore = await teamRepo.getTeam(teamId);
     expect(teamBefore?.memberIds).toEqual([memberId]);
 
-    const { code, res } = await removeTeamMemberUsecase.execute(
-      teamId,
-      memberId,
-    );
-    expect(code).toEqual(200);
+    const res = await removeTeamMemberUsecase.execute(teamId, memberId);
     expect(res?.memberIds).toEqual([]);
     expect(res?.id).toEqual(team.id);
     expect(res?.path).toEqual(team.path);

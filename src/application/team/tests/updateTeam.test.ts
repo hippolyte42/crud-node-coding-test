@@ -1,8 +1,8 @@
 import { BSON, Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../../repository/ports/team.repository.port";
 import { UpdateTeamUsecase } from "../updateTeam.usecase";
-import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { TeamModel } from "../../../repository/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repository/mongo/team.repository.mongo";
 import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
 import { TeamEntity } from "../../../entities/team.entity";
 
@@ -49,11 +49,7 @@ describe("UpdateTeamUsecase", () => {
       name: "Team A2",
       path: `,${new BSON.ObjectId()},`,
     };
-    const { code, res } = await updateTeamUsecase.execute(
-      teamId,
-      updateTeamInput,
-    );
-    expect(code).toEqual(200);
+    const res = await updateTeamUsecase.execute(teamId, updateTeamInput);
     expect(res).toEqual({ ...team, ...updateTeamInput });
 
     const teamAfter = await teamRepo.getTeam(teamId);
@@ -64,11 +60,7 @@ describe("UpdateTeamUsecase", () => {
     const updateTeamInput = {
       name: "Team A2",
     };
-    const { code, res } = await updateTeamUsecase.execute(
-      teamId,
-      updateTeamInput,
-    );
-    expect(code).toEqual(200);
+    const res = await updateTeamUsecase.execute(teamId, updateTeamInput);
     expect(res).toEqual({ ...team, ...updateTeamInput });
     const teamAfter = await teamRepo.getTeam(teamId);
     expect(teamAfter).toEqual({ ...team, ...updateTeamInput });

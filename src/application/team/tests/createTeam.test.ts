@@ -1,8 +1,8 @@
 import { Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../../repository/ports/team.repository.port";
 import { CreateTeamUsecase } from "../createTeam.usecase";
-import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { TeamModel } from "../../../repository/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repository/mongo/team.repository.mongo";
 import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
 
 describe("CreateTeamUsecase", () => {
@@ -35,12 +35,11 @@ describe("CreateTeamUsecase", () => {
   });
 
   test("Create Team", async () => {
-    const { code, res } = await createTeamUsecase.execute({
+    const res = await createTeamUsecase.execute({
       memberIds,
       name,
       path,
     });
-    expect(code).toEqual(200);
     expect(res).toBeDefined();
     expect(res?.id).toBeDefined();
     expect(res?.memberIds).toEqual(memberIds);
