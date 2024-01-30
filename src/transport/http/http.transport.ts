@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import { Usecases } from "../../application/init.application";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
@@ -65,34 +65,38 @@ export const http = async (usecases: Usecases) => {
     },
   );
 
-  app.patch(
-    "/teams/add-team-member",
+  app.post(
+    "/teams/:teamId/member",
     validateRequest({
-      body: z.object({
+      params: z.object({
         teamId: z.string(),
+      }),
+      body: z.object({
         memberId: z.string(),
       }),
     }),
     async (req, res) => {
       const result = await usecases.addTeamMemberUsecase.execute(
-        req.body.teamId,
+        req.params.teamId,
         req.body.memberId,
       );
       res.status(200);
       res.json(result);
     },
   );
-  app.patch(
-    "/teams/remove-team-member",
+  app.delete(
+    "/teams/:teamId/member",
     validateRequest({
-      body: z.object({
+      params: z.object({
         teamId: z.string(),
+      }),
+      body: z.object({
         memberId: z.string(),
       }),
     }),
     async (req, res) => {
       const result = await usecases.removeTeamMemberUsecase.execute(
-        req.body.teamId,
+        req.params.teamId,
         req.body.memberId,
       );
       res.status(200);
@@ -116,7 +120,7 @@ export const http = async (usecases: Usecases) => {
       res.json(result);
     },
   );
-  app.patch(
+  app.put(
     "/teams/:teamId",
     validateRequest({
       params: z.object({
