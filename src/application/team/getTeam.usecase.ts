@@ -1,6 +1,7 @@
 import { TeamEntity } from "../../entities/team.entity";
 import RessourceNotFoundError from "../../errors/ressourceNotFound.error";
 import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
+import { getFirstParentTeamIdFromTeamPath } from "./utils";
 
 export class GetTeamUsecase {
   constructor(private readonly teamRepository: TeamRepositoryPort) {}
@@ -18,26 +19,25 @@ export class GetTeamUsecase {
         message: `GetTeamUsecase: team ${teamId} not found.`,
       });
     }
-    const res: TeamEntity & {
+
+    const result: TeamEntity & {
       parent: TeamEntity | null;
-      firstChildren: TeamEntity[] | null;
+      firstChildren: TeamEntity[];
     } = {
       ...team,
       firstChildren: [],
       parent: null,
     };
 
-    if (team.path.length) {
-      const path = team.path.split(",");
-      const topmostParentId = path[path.length - 2];
-      const parent = await this.teamRepository.getTeam(topmostParentId);
-      res.parent = parent;
+    if (team.path) {
+      const parentId = getFirstParentTeamIdFromTeamPath(team.path);
+      const parent = await this.teamRepository.getTeam(parentId);
+      result.parent = parent;
     }
 
-    const firstChildren =
+    result.firstChildren =
       await this.teamRepository.getTeamFirstChildren(teamId);
-    res.firstChildren = firstChildren;
 
-    return res;
+    return result;
   }
 }
