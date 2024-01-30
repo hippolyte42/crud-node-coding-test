@@ -16,7 +16,7 @@ describe("GetFirstAncestorTeamsUsecase", () => {
   let ancestor1Input: Omit<TeamEntity, "id">,
     ancestor2Input: Omit<TeamEntity, "id">,
     childInput: Omit<TeamEntity, "id">;
-  let ancestor1: TeamEntity, ancestor2: TeamEntity;
+  let ancestor1: TeamEntity, ancestor2: TeamEntity, child: TeamEntity;
 
   beforeAll(async () => {
     connection = await MongoClient.connect((global as any).__MONGO_URI__, {
@@ -39,15 +39,16 @@ describe("GetFirstAncestorTeamsUsecase", () => {
       memberIds: [],
       path: "",
     };
-    childInput = {
-      name: "Team B1",
-      memberIds: [],
-      path: ",parentId,",
-    };
 
     ancestor1 = await teamRepo.createTeam(ancestor1Input);
     ancestor2 = await teamRepo.createTeam(ancestor2Input);
-    await teamRepo.createTeam(childInput);
+
+    childInput = {
+      name: "Team B1",
+      memberIds: [],
+      path: `,${ancestor1.id},`,
+    };
+    child = await teamRepo.createTeam(childInput);
   });
 
   afterAll(async () => {
@@ -56,6 +57,9 @@ describe("GetFirstAncestorTeamsUsecase", () => {
 
   test("Get First Ancestor Teams", async () => {
     const res = await getFirstAncestorTeamsUsecase.execute();
-    expect(res).toEqual([ancestor1, ancestor2]);
+    expect(res).toEqual([
+      { ...ancestor1, firstChildren: [child] },
+      { ...ancestor2, firstChildren: [] },
+    ]);
   });
 });

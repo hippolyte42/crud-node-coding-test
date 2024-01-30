@@ -126,7 +126,7 @@ export class TeamRepositoryMongo implements TeamRepositoryPort {
       await this.teamCollection
         .find({
           path: {
-            $regex: new RegExp(`[^,]+,${parentTeamId},$`),
+            $regex: new RegExp(`,${parentTeamId},$`),
           },
         })
         .toArray()
