@@ -65,8 +65,8 @@ export const http = async (usecases: Usecases) => {
     },
   );
 
-  app.post(
-    "/teams/:teamId/member",
+  app.patch(
+    "/teams/:teamId/member/add",
     validateRequest({
       params: z.object({
         teamId: z.string(),
@@ -84,8 +84,8 @@ export const http = async (usecases: Usecases) => {
       res.json(result);
     },
   );
-  app.delete(
-    "/teams/:teamId/member",
+  app.patch(
+    "/teams/:teamId/member/remove",
     validateRequest({
       params: z.object({
         teamId: z.string(),
