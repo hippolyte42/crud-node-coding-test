@@ -24,7 +24,7 @@ export const http = async (usecases: Usecases) => {
     async function (req, res) {
       const result = await usecases.createTeamUsecase.execute(req.body);
 
-      res.status(200);
+      res.status(201);
       res.json(result);
     },
   );
