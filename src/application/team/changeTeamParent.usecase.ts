@@ -1,4 +1,4 @@
-import { TeamEntity } from "../../entities/team.entity";
+import RessourceConflictError from "../../errors/ressourceConflict.error";
 import RessourceNotFoundError from "../../errors/ressourceNotFound.error";
 import { TeamRepositoryPort } from "../../repository/ports/team.repository.port";
 
@@ -13,6 +13,16 @@ export class ChangeTeamParentUsecase {
         message: `ChangeTeamParentUsecase: team ${teamId} not found.`,
       });
     }
+
+    if (team.path) {
+      const pathChunk = team.path.split(",");
+      const teamFirstParent = pathChunk[pathChunk.length - 2];
+      if (teamFirstParent === newParentTeamId) {
+        throw new RessourceConflictError({
+          message: `ChangeTeamParentUsecase: team ${newParentTeamId} already direct parent of team ${teamId}`,
+        });
+      }
+    }
     const parentTeam = await this.teamRepository.getTeam(newParentTeamId);
     if (!parentTeam) {
       throw new RessourceNotFoundError({
@@ -24,29 +34,26 @@ export class ChangeTeamParentUsecase {
 
     const teamChildren = await this.teamRepository.getTeamChildren(teamId);
 
-    const updateManyTeamsInput: {
+    const updateTeamsPathInput: {
       teamId: string;
-      updateTeamInput: Partial<Omit<TeamEntity, "id">>;
-    }[] = [];
-    updateManyTeamsInput.push({
-      teamId,
-      updateTeamInput: {
-        path: teamNewPath,
-      },
-    });
-    teamChildren.map((teamChild) => {
+      newPath: string;
+    }[] = teamChildren.map((teamChild) => {
       const teamChildNewPath = teamChild.path.replace(
         teamOldPath,
-        `${teamNewPath}${teamId}` + ",",
+        `${teamNewPath}`,
       );
-      updateManyTeamsInput.push({
+
+      return {
         teamId: teamChild.id,
-        updateTeamInput: {
-          path: teamChildNewPath,
-        },
-      });
+        newPath: teamChildNewPath,
+      };
     });
 
-    return this.teamRepository.updateManyTeamsInTrx(updateManyTeamsInput);
+    updateTeamsPathInput.push({
+      teamId,
+      newPath: teamNewPath,
+    });
+
+    return this.teamRepository.updateTeamsPath(updateTeamsPathInput);
   }
 }

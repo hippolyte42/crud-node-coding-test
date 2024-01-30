@@ -1,8 +1,8 @@
 import { Collection, Db, MongoClient } from "mongodb";
-import { TeamRepositoryPort } from "../../../repositories/ports/team.repository.port";
+import { TeamRepositoryPort } from "../../../repository/ports/team.repository.port";
 import { ChangeTeamParentUsecase } from "../changeTeamParent.usecase";
-import { TeamModel } from "../../../repositories/mongo/models/team.model.mongo";
-import { TeamRepositoryMongo } from "../../../repositories/mongo/team.repository.mongo";
+import { TeamModel } from "../../../repository/mongo/models/team.model.mongo";
+import { TeamRepositoryMongo } from "../../../repository/mongo/team.repository.mongo";
 import { MONGODB_COLLECTION_TEAMS } from "../../../constants";
 import { TeamEntity } from "../../../entities/team.entity";
 
@@ -32,22 +32,22 @@ describe("ChangeTeamParentUsecase", () => {
     oldParentTeam = await teamRepo.createTeam({
       memberIds: [],
       path: "",
-      name: "Team A1",
+      name: "Old parent of team",
     });
     newParentTeam = await teamRepo.createTeam({
       memberIds: [],
       path: "",
-      name: "Team A2",
+      name: "New parent of team",
     });
     team = await teamRepo.createTeam({
       memberIds: [],
       path: `,${oldParentTeam.id},`,
-      name: "Team B",
+      name: "Team",
     });
     childTeam = await teamRepo.createTeam({
       memberIds: [],
       path: `,${oldParentTeam.id},${team.id},`,
-      name: "Team C",
+      name: "Child of team",
     });
   });
 
@@ -56,11 +56,10 @@ describe("ChangeTeamParentUsecase", () => {
   });
 
   test("Change Team Parent", async () => {
-    const { code, res } = await changeTeamParentUsecase.execute(
+    const res = await changeTeamParentUsecase.execute(
       team.id,
       newParentTeam.id,
     );
-    expect(code).toEqual(200);
     expect(res).toBeTruthy();
 
     const updatedTeam = await teamRepo.getTeam(team.id);
