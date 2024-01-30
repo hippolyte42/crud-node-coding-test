@@ -26,16 +26,17 @@ export class RemoveTeamMemberUsecase {
     }
 
     const memberIds = team.memberIds;
-    const indexToRemove = memberIds
+    const indexOfMemberToRemove = memberIds
       .map((memberId) => memberId.toString())
       .indexOf(memberId);
-    if (indexToRemove === -1) {
+
+    if (indexOfMemberToRemove === -1) {
       throw new RessourceConflictError({
         message: `RemoveTeamMemberUsecase: member ${memberId} not in team ${teamId}.`,
       });
     }
 
-    memberIds.splice(indexToRemove, 1);
+    memberIds.splice(indexOfMemberToRemove, 1);
 
     return this.teamRepository.updateTeam(teamId, {
       ...team,
