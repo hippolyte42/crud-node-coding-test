@@ -58,6 +58,7 @@ describe("UpdateTeamUsecase", () => {
 
   test("Update Team: update name", async () => {
     const updateTeamInput = {
+      ...team,
       name: "Team A2",
     };
     const res = await updateTeamUsecase.execute(teamId, updateTeamInput);

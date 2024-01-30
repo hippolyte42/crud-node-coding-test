@@ -38,6 +38,7 @@ export class RemoveTeamMemberUsecase {
     memberIds.splice(indexToRemove, 1);
 
     return this.teamRepository.updateTeam(teamId, {
+      ...team,
       memberIds,
     });
   }

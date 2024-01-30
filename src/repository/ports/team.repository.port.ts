@@ -9,7 +9,7 @@ export abstract class TeamRepositoryPort {
 
   abstract updateTeam(
     teamId: string,
-    updateTeamInput: Partial<Omit<TeamEntity, "id">>,
+    updateTeamInput: Omit<TeamEntity, "id">,
   ): Promise<TeamEntity>;
 
   abstract deleteTeam(teamId: string): Promise<boolean>;

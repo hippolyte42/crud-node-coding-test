@@ -6,7 +6,7 @@ export class UpdateTeamUsecase {
 
   async execute(
     teamId: string,
-    updateTeamInput: Partial<Omit<TeamEntity, "_id">>,
+    updateTeamInput: Omit<TeamEntity, "id">,
   ): Promise<TeamEntity> {
     return this.teamRepository.updateTeam(teamId, updateTeamInput);
   }

@@ -32,6 +32,7 @@ export class AddTeamMemberUsecase {
     }
 
     return this.teamRepository.updateTeam(teamId, {
+      ...team,
       memberIds: [...team.memberIds, memberId],
     });
   }
