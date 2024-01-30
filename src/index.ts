@@ -1,4 +1,4 @@
-import { initRepositories } from "./repository/init.repositories";
+import { initRepository } from "./repository/init.repository";
 import { initApplication } from "./application/init.application";
 import { initTransport } from "./transport/init.transport";
 
@@ -9,8 +9,8 @@ let danglingConnections: DanglingConnections[] = [];
 
 const run = async () => {
   // repositories
-  const { close: repositoriesClose, repositories } = await initRepositories();
-  danglingConnections.push({ close: repositoriesClose });
+  const { close: repositoryClose, repositories } = await initRepository();
+  danglingConnections.push({ close: repositoryClose });
 
   // application
   const usecases = initApplication(repositories);

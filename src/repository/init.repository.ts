@@ -10,10 +10,8 @@ import { TeamRepositoryPort } from "./ports/team.repository.port";
 import { MemberRepositoryPort } from "./ports/member.repository.port";
 import { MemberModel } from "./mongo/models/member.model.mongo";
 import { TeamModel } from "./mongo/models/team.model.mongo";
-import { TeamMapper } from "./mongo/mappers/team.mapper.mongo";
-import { MemberMapper } from "./mongo/mappers/member.mapper.mongo";
 
-export const initRepositories = async (): Promise<{
+export const initRepository = async (): Promise<{
   repositories: {
     teamRepository: TeamRepositoryPort;
     memberRepository: MemberRepositoryPort;
@@ -21,7 +19,7 @@ export const initRepositories = async (): Promise<{
   close: () => Promise<void>;
 }> => {
   // mongo
-  const url = "mongodb://localhost:27017";
+  const url = "mongodb://localhost:27017"; // todo var in .env or sops
   const mongoClient = new MongoClient(url);
   const mongoClientConnected = await mongoClient.connect();
   const mongoDBClient = mongoClientConnected.db(MONGODB_DATABASE_NAME);
